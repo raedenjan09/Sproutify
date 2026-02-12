@@ -43,7 +43,7 @@ export default function ProductScreen() {
     };
 
     const handleAddToCart = () => {
-        dispatch(addToCart({ ...product, product: product._id }));
+        dispatch(addToCart({ ...product, product: product._id, qty: 1 }));
         alert('Added to cart');
     };
 
@@ -110,33 +110,41 @@ export default function ProductScreen() {
 
                     <View style={{ height: 1, backgroundColor: '#eee', marginVertical: 20 }} />
 
-                    <Text style={styles.sectionTitle}>Write a Review</Text>
-                    {/* Simplified Form for brevity, assuming generic components or just standard RN */}
-                    <View style={styles.form}>
-                        <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-                            {[1, 2, 3, 4, 5].map((r) => (
-                                <Ionicons
-                                    key={r}
-                                    name={r <= rating ? "star" : "star-outline"}
-                                    size={32}
-                                    color="#FFD700"
-                                    onPress={() => setRating(r)}
-                                />
-                            ))}
+                    <Text style={styles.sectionTitle}>
+                        {product.reviews && product.reviews.some(r => r.user === userInfo?._id) ? "Edit Your Review" : "Write a Review"}
+                    </Text>
+                    {userInfo ? (
+                        <View style={styles.form}>
+                            <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+                                {[1, 2, 3, 4, 5].map((r) => (
+                                    <Ionicons
+                                        key={r}
+                                        name={r <= rating ? "star" : "star-outline"}
+                                        size={32}
+                                        color="#FFD700"
+                                        onPress={() => setRating(r)}
+                                    />
+                                ))}
+                            </View>
+                            <TextInput
+                                mode="outlined"
+                                label="Comment"
+                                value={comment}
+                                onChangeText={setComment}
+                                multiline
+                                numberOfLines={3}
+                                style={{ marginBottom: 15, backgroundColor: 'white' }}
+                                theme={{ colors: { primary: '#2E7D32' } }}
+                            />
+                            <Button mode="contained" onPress={submitHandler} style={{ backgroundColor: '#2E7D32' }}>
+                                {product.reviews && product.reviews.some(r => r.user === userInfo?._id) ? "Update Review" : "Submit Review"}
+                            </Button>
                         </View>
-                        <TextInput
-                            mode="outlined"
-                            label="Comment"
-                            value={comment}
-                            onChangeText={setComment}
-                            multiline
-                            numberOfLines={3}
-                            style={{ marginBottom: 15, backgroundColor: 'white' }}
-                        />
-                        <Button mode="contained" onPress={submitHandler} style={{ backgroundColor: '#2E7D32' }}>
-                            Submit Review
+                    ) : (
+                        <Button mode="outlined" onPress={() => router.push('/login')} style={{ borderColor: '#2E7D32', marginTop: 10 }}>
+                            Login to Write a Review
                         </Button>
-                    </View>
+                    )}
                 </View>
             </ScrollView>
 

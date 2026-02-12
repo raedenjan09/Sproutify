@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserInfo } from '../src/redux/slices/authSlice';
+import { fetchCart } from '../src/redux/slices/cartSlice';
 
 export default function AuthCheck() {
     const router = useRouter();
@@ -15,6 +16,7 @@ export default function AuthCheck() {
             const storedUserInfo = await AsyncStorage.getItem('userInfo');
             if (storedUserInfo) {
                 dispatch(setUserInfo(JSON.parse(storedUserInfo)));
+                dispatch(fetchCart()); // Fetch user's cart
                 router.replace('/(drawer)/(tabs)');
             } else {
                 router.replace('/login');

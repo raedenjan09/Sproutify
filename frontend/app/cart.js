@@ -14,7 +14,7 @@ export default function CartScreen() {
     const total = cartItems.reduce((acc, item) => acc + item.price, 0);
 
     const handleCheckout = () => {
-        alert('Checkout feature coming soon!');
+        router.push('/shipping');
     };
 
     const renderItem = ({ item }) => (

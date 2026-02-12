@@ -36,11 +36,6 @@ const orderSchema = mongoose.Schema(
             update_time: { type: String },
             email_address: { type: String },
         },
-        itemsPrice: {
-            type: Number,
-            required: true,
-            default: 0.0,
-        },
         taxPrice: {
             type: Number,
             required: true,
@@ -75,8 +70,8 @@ const orderSchema = mongoose.Schema(
         status: {
             type: String,
             required: true,
-            enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
-            default: 'Pending'
+            default: 'Pending',
+            enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
         }
     },
     {

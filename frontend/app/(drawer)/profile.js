@@ -26,6 +26,9 @@ export default function ProfileScreen() {
                 <Text variant="bodyMedium" style={styles.role}>Role: {userInfo.role}</Text>
             </View>
 
+            <Button mode="contained" onPress={() => router.push('/edit-profile')} style={styles.button} buttonColor="#7B1FA2">
+                Edit Profile
+            </Button>
             <Button mode="contained" onPress={() => router.push('/orders')} style={styles.button} buttonColor="#2E7D32">
                 My Orders
             </Button>

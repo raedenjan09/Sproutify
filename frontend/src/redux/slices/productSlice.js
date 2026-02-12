@@ -38,22 +38,42 @@ export const fetchProductDetails = createAsyncThunk(
     }
 );
 
+// Create Product Review
 export const createProductReview = createAsyncThunk(
-    'products/createReview',
-    async ({ productId, review }, { getState, rejectWithValue }) => {
+    'products/createProductReview',
+    async ({ productId, review }, { rejectWithValue, getState }) => {
         try {
-            const {
-                auth: { userInfo },
-            } = getState();
-
+            const { auth: { userInfo } } = getState();
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${userInfo.token}`,
                 },
             };
-
             await api.post(`/api/products/${productId}/reviews`, review, config);
+        } catch (error) {
+            return rejectWithValue(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            );
+        }
+    }
+);
+
+// Update Product Review
+export const updateProductReview = createAsyncThunk(
+    'products/updateProductReview',
+    async ({ productId, review }, { rejectWithValue, getState }) => {
+        try {
+            const { auth: { userInfo } } = getState();
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
+            await api.put(`/api/products/${productId}/reviews`, review, config);
         } catch (error) {
             return rejectWithValue(
                 error.response && error.response.data.message
@@ -125,10 +145,18 @@ const productSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            // Create Review
+            .addCase(createProductReview.pending, (state) => {
+                state.reviewLoading = true;
+                state.reviewError = null;
+                state.reviewSuccess = false;
+            })
             .addCase(createProductReview.fulfilled, (state) => {
+                state.reviewLoading = false;
                 state.reviewSuccess = true;
             })
             .addCase(createProductReview.rejected, (state, action) => {
+                state.reviewLoading = false;
                 state.reviewError = action.payload;
             })
             .addCase(fetchTopProducts.fulfilled, (state, action) => {

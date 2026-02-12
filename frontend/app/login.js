@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { fetchCart } from '../src/redux/slices/cartSlice';
 import { login } from '../src/redux/slices/authSlice';
 import Input from '../src/components/Input';
 import Button from '../src/components/Button';
@@ -16,9 +17,10 @@ export default function Login() {
 
     useEffect(() => {
         if (userInfo) {
+            dispatch(fetchCart());
             router.replace('/(drawer)/(tabs)'); // Redirect to tabs or home
         }
-    }, [userInfo, router]);
+    }, [userInfo, router, dispatch]);
 
     const handleLogin = () => {
         dispatch(login({ email, password }));

@@ -24,9 +24,25 @@ export default function DrawerLayout() {
             <Drawer.Screen
                 name="profile"
                 options={{
-                    drawerLabel: 'Profile',
+                    drawerLabel: 'My Profile',
                     title: 'My Profile',
                     drawerIcon: ({ color }) => <Ionicons name="person-outline" size={22} color={color} />,
+                }}
+            />
+            <Drawer.Screen
+                name="orders"
+                options={{
+                    drawerLabel: 'Order History',
+                    title: 'My Orders',
+                    drawerIcon: ({ color }) => <Ionicons name="list-outline" size={22} color={color} />,
+                }}
+            />
+            <Drawer.Screen
+                name="edit-profile"
+                options={{
+                    drawerLabel: 'Edit Profile',
+                    title: 'Edit Profile',
+                    drawerIcon: ({ color }) => <Ionicons name="create-outline" size={22} color={color} />,
                 }}
             />
         </Drawer>

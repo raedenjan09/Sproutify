@@ -15,7 +15,8 @@ const addOrderItems = async (req, res) => {
     } = req.body;
 
     if (orderItems && orderItems.length === 0) {
-        res.status(400).json({ message: 'No order items' });
+        res.status(400);
+        throw new Error('No order items');
         return;
     } else {
         const order = new Order({
@@ -47,7 +48,8 @@ const getOrderById = async (req, res) => {
     if (order) {
         res.json(order);
     } else {
-        res.status(404).json({ message: 'Order not found' });
+        res.status(404);
+        throw new Error('Order not found');
     }
 };
 
@@ -68,10 +70,10 @@ const updateOrderToPaid = async (req, res) => {
         };
 
         const updatedOrder = await order.save();
-
         res.json(updatedOrder);
     } else {
-        res.status(404).json({ message: 'Order not found' });
+        res.status(404);
+        throw new Error('Order not found');
     }
 };
 
@@ -87,10 +89,10 @@ const updateOrderToDelivered = async (req, res) => {
         order.status = 'Delivered';
 
         const updatedOrder = await order.save();
-
         res.json(updatedOrder);
     } else {
-        res.status(404).json({ message: 'Order not found' });
+        res.status(404);
+        throw new Error('Order not found');
     }
 };
 
@@ -110,6 +112,33 @@ const getOrders = async (req, res) => {
     res.json(orders);
 };
 
+// @desc    Cancel order
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelOrder = async (req, res) => {
+    const order = await Order.findById(req.params.id);
+
+    if (order) {
+        if (order.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            res.status(401);
+            throw new Error('Not authorized to cancel this order');
+        }
+
+        if (order.status !== 'Pending') {
+            res.status(400);
+            throw new Error('Order cannot be cancelled');
+        }
+
+        order.status = 'Cancelled';
+        const updatedOrder = await order.save();
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
+};
+
+
 module.exports = {
     addOrderItems,
     getOrderById,
@@ -117,4 +146,5 @@ module.exports = {
     updateOrderToDelivered,
     getMyOrders,
     getOrders,
+    cancelOrder
 };

@@ -188,9 +188,42 @@ const createProductReview = async (req, res) => {
     }
 };
 
-// @desc    Get top rated products (Featured)
-// @route   GET /api/products/top
-// @access  Public
+// @desc    Update product review
+// @route   PUT /api/products/:id/reviews
+// @access  Private
+const updateProductReview = async (req, res) => {
+    const { rating, comment } = req.body;
+
+    try {
+        const product = await Product.findById(req.params.id);
+
+        if (product) {
+            const reviewIndex = product.reviews.findIndex(
+                (r) => r.user.toString() === req.user._id.toString()
+            );
+
+            if (reviewIndex === -1) {
+                res.status(404);
+                throw new Error('Review not found');
+            }
+
+            product.reviews[reviewIndex].rating = Number(rating);
+            product.reviews[reviewIndex].comment = comment;
+
+            product.rating =
+                product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+                product.reviews.length;
+
+            await product.save();
+            res.status(200).json({ message: 'Review updated' });
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const getTopProducts = async (req, res) => {
     try {
         // Fetch products that are featured, or top rated if none featured
@@ -213,5 +246,6 @@ module.exports = {
     createProduct,
     updateProduct,
     createProductReview,
+    updateProductReview,
     getTopProducts,
 };
